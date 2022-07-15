@@ -18,3 +18,12 @@ library(bench)
 bench::mark(parLapply(cl_1,2:4,function(exponent) 2^exponent),
             lapply(2:4,function(exponent) 2^exponent))
 stopCluster(cl_1)
+
+
+
+
+x <- seq(0, 10, length.out = 100)
+y <- seq(-1, 1, length.out = 20)
+
+
+d1 <- expand.grid(x,y)
