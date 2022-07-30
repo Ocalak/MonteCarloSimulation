@@ -1,0 +1,62 @@
+---
+title: "Term paper_The weak law of large numbers for a estimator"
+author: "Sunyoung Ji"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r library, include=FALSE}
+library(tidyverse)
+```
+
+# 1. The weak law of large numbers
+
+The estimator $\widehat{\beta}$ is weakly consistent if for any $\epsilon$ $\leqslant$ 0, that is, 
+$$
+\lim_{n \to \infty}P(\left| \widehat{\beta_n} - \beta_n \right| \leqslant \epsilon) = 1
+$$
+
+# 2. Set up
+
+`x`: a random sample from the Bernoulli distribution with probability `p` \n
+`n`: sample size \n
+`t`: number of trials \n
+`p`: probability \n
+`eps`: any non-zero constants \n
+
+# 3. Monte Carlo Simulation
+
+```{r mc, echo = TRUE}
+
+weak_consistency <- function(n, t, p, eps){
+  n_eps = length(eps)
+  x <- replicate(t,rbinom(n,1,p))
+  beta_hat <- colMeans(x)
+  probs = rep(0, n_eps)
+  
+  for (i in 1:n_eps) {
+    probs[i] = mean(abs(beta_hat - p) <= eps[i])
+  }
+  
+  esti_list <- list(n, t, p, eps, probs)
+  names(esti_list) <- c("Sample Size", "Number of Trial", "Probability",
+                      "non-zero constants", "Convergence in Probability")
+  
+  class(esti_list) <- "esti_class"
+  
+  plot_summary <- ggplot(x=eps, y=p) +
+    geom_point() +
+    labs(y = "Probability", x = "Epsilon") +
+    geom_hline(yintercept = 1, color = "red", size = 1, linetype = "dashed")
+  
+  return(esti_list)
+  
+  }
+
+eps = seq(0.01, 0.5, by= 0.01)
+weak_consistency(20, 10000, 0.7, eps)
+
+```
