@@ -42,7 +42,7 @@ gen <- function(param_list){#take inputs from parameter grids but not combinatio
     idata
 }
 
-user_func <-(param_list,idata){
+user_func <-function(param_list,idata){
   ols <- lm(V~group,data=idata)
   glm <- glm(V ~ group, data = idata)
   get_res <- c(ols = ols$coef,gls= glm$coef)
