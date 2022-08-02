@@ -1,39 +1,62 @@
-install.packages("furrr")
-library(furrr)
+#Parameter Grids
+param_grid <- function(...){
+  point <- list(...)
+  if(is.null(names(point)) == TRUE){
+    stop("Please provide a name for each parameters")
+  }
+  a <- expand.grid(...)%>% tibble()
+  return(a)
+}
+#' Generate parameters and test the function
+#' n <- c(50,100,1000)
+#' loc <- c(1,2,3)
+#' ttn <- c("bus","train")
+#'  param_grid("Money"=n,"Location"=loc,"Transportation" = ttn)
 
 
+#Data Generation
+gen_data <- function(condition){
+  idata <- with(condition,rnorm(N,mean,sd))
+  idata
+}
+user_func <- (condition,idata){
+  get_res <- sd(idata)
+  get_res
+}
+summarise_func <- function(condition,get_res){
+  summ <- c(sd=sd(get_res),mu=mean(get_res),lx =length(get_res))
+  summ
+} 
+#examples
+gen <- function(param_list){#take inputs from parameter grids but not combination
+  N <- param_list$sample_size#n
+  aks <- param_list$2#same also here
+    asd <- param_list$3#same also here
+    #Now we(user) should define the data generation method
+    n2 <- rnorm(N,mean=aks)
+    n3 <- rnorm(N,sd=asd)
+    idata <- data.frame(group = c(rep("r1",N),rep("r2",N)),V = c(n2,n3))
+    idata
+}
 
-#First I want to see the numbers of cores
-library(parllel)
-detectCores()
-#> 8
-#So I want to use minues 1 core of the total cores on my mac 
+user_func <-(param_list,idata){
+  ols <- lm(V~group,data=idata)
+  glm <- glm(V ~ group, data = idata)
+  get_res <- c(ols = ols$coef,gls= glm$coef)
+  get_res
+}
 
-no_cores <- detectCores() -1 #number of cores that I want to use
+summarise <- function(param_list,get_res){
+  mean <-  mean(get_res)
+  min <- min(get_res)
+  max <- max(get_res)
+  summ <- list(max,min,mean)#or c 
+  sum
+}
 
-#Parallel with furrr
-#One approach could be using future_map function
-
-plan(multisession,workers= no_cores)# 
-do_nothing <- future_map(c("Hello ","World"), ~.x)#Runs in parallel
-
-
-#Proof of running in parallel
-install.packages("tictoc")
-library(tictoc)
-
-plan(sequential)
-tic()
-do_nothing <- future_map(c(2,2,2), ~Sys.sleep(.x))
-toc()
-#> result is 6.08 sec
-
-plan(multisession,workers=3)
-tic()
-do_nothing <- future_map(c(2,2,2), ~Sys.sleep(.x))
-toc()
-#> result is 2.59 sec
-#Look at future_pmap() also.
-
-
-
+mc_sim <- function(replication = NULL,summarise=summarise,
+                   param_grid = param_grid,user_func= user_func,
+                   gen_data=gen_data,parallel = TRUE,seed=NULL,
+                   type_parallel = NULL,Workers = NULL){
+  
+}
