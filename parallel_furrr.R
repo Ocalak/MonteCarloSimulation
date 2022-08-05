@@ -94,7 +94,7 @@ your_func <- function(nx,cx){
 any_function <- function(nx=nx,cx=cx){
   map_dfc(1:10, ~ your_func(nx=nx,cx=cx))}
 
-res <- pmap_dfc(parameter_grid,any_function)#Now check the output of the res. I couldnt how can I order these outputs? Any idea. 
+res <- pmap_dfc(parameter_grid,any_function)#Now check the output of the res. I couldnt find a way to  print it nicely? Any idea. 
 
 
 #########################Not ready#############################
