@@ -107,7 +107,7 @@ final_MC <- function(param_list,user_func,nrep){
                         ",nrep){map_dfc(1:nrep, ~ user_func(",paste(param_names,sep="", 
                                                                     collapse=","),")",")","}",collapse="", sep="")))
   
-  parameter_grid <- expand.grid("n"=n,"c"=c,"v"=v,"nrep"=nrep)
+  parameter_grid <- param_grid("n"=n,"c"=c,"v"=v,"nrep"=nrep)
   
   final_mc <- eval(parse(text=paste("pmap_dfc(parameter_grid,mc_inner)")))
   return(final_mc)
